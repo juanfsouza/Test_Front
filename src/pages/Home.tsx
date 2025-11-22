@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { getUsers } from "@/api/users";
 import React, { useEffect, useState } from "react";
 import UserList from "@/components/user/UserList";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TextAnimate } from "@/components/ui/text-animate";
 
 export default function Home() {
   const [users, setUsers] = useState<User[]>([]);
@@ -15,11 +17,15 @@ export default function Home() {
     async function load() {
       try {
         const data = await getUsers();
-        setUsers(data);
-        setFiltered(data);
+
+        setTimeout(() => {
+          setUsers(data);
+          setFiltered(data);
+          setLoading(false);
+        }, 500);
+
       } catch {
         setError("Erro ao carregar usuários");
-      } finally {
         setLoading(false);
       }
     }
@@ -37,7 +43,7 @@ export default function Home() {
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Lista de Usuários</h1>
+      <TextAnimate className="text-xl font-bold" animation="blurInUp" by="character" once>Lista de Usuários</TextAnimate>
 
       <Input
         placeholder="Buscar por nome..."
@@ -45,7 +51,13 @@ export default function Home() {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
       />
 
-      {loading && <p>Carregando...</p>}
+      {loading && (
+        <div className="space-y-3">
+          {[1,2,3,4].map((i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+          ))}
+        </div>
+      )}
       {error && <p className="text-red-500">{error}</p>}
 
       {!loading && !error && <UserList users={filtered} />}

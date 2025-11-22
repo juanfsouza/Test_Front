@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
 import UserCard from "./UserCard";
 import UserModal from "./UserModal";
@@ -9,12 +10,21 @@ export default function UserList({ users }: Props) {
   return (
     <>
       <div className="space-y-3">
-        {users.map((user) => (
-          <UserCard
+        {users.map((user, index) => (
+          <motion.div
             key={user.id}
-            user={user}
-            onClick={() => setSelected(user)}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.3,
+              delay: index * 0.08,
+            }}
+          >
+            <UserCard
+              user={user}
+              onClick={() => setSelected(user)}
+            />
+          </motion.div>
         ))}
       </div>
 
